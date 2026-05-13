@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARVERSE // Immersive 3D Automotive Universe Platform</title>
+    
+    <!-- UI & Icons Infrastructure -->
+    <script src="jsdelivr.net"></script>
+    <link rel="preconnect" href="googleapis.com">
+    <link rel="preconnect" href="gstatic.com" crossorigin>
+    <link href="googleapis.com" rel="stylesheet">
+    <link rel="stylesheet" href="jsdelivr.net">
+    
+    <!-- Core 3D Graphics Engine Stack -->
+    <script src="cloudflare.com"></script>
+    <script src="jsdelivr.net"></script>
+    <script src="cloudflare.com"></script>
+
+    <style type="text/tailwindcss">
+        @theme {
+            --font-orbitron: 'Orbitron', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --color-cyber-bg: #020617;
+            --color-cyber-panel: rgba(15, 23, 42, 0.65);
+            --color-cyber-border: rgba(255, 255, 255, 0.06);
+            --color-cyber-blue: #3b82f6;
+            --color-cyber-neon: #06b6d4;
+            --color-cyber-green: #10b981;
+            --color-cyber-red: #f43f5e;
+            --color-cyber-orange: #f97316;
+            --color-cyber-muted: #64748b;
+        }
+    </style>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(7, 11, 23, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(6, 182, 212, 0.4);
+            transform: translateY(-2px);
+        }
+        .manual-view {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+        }
+        /* Custom scrollbar structural definitions */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden select-none">
+
+    <!-- MASTER GLOBAL SYSTEM HEADER -->
+    <header class="glass-panel border-b border-cyber-border h-16 px-6 flex items-center justify-between z-50">
+        <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-2">
+                <div class="w-2.5 h-2.5 bg-cyber-neon rounded-full animate-pulse shadow-[0_0_15px_#06b6d4]"></div>
+                <span class="font-orbitron text-xl font-black tracking-widest bg-gradient-to-r from-white via-slate-200 to-cyber-neon bg-clip-text text-transparent">
+                    CARVERSE<span class="text-[10px] font-mono font-normal tracking-normal text-cyber-blue ml-2 border border-cyber-blue/30 px-1 rounded">PRO.v2.6</span>
+                </span>
+            </div>
+            <!-- Intelligent OmniSearch Node -->
+            <div class="relative hidden md:block w-72">
+                <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-cyber-muted text-xs"></i>
+                <input type="text" id="omniSearchInput" placeholder="Search 1,000+ nodes, codes, or parts..." class="w-full h-8 bg-slate-950/80 border border-cyber-border rounded-lg pl-8 pr-4 text-xs text-white focus:outline-none focus:border-cyber-neon focus:ring-1 focus:ring-cyber-neon/30 transition-all">
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-6 font-mono text-xs text-cyber-muted">
+            <div class="hidden lg:flex items-center space-x-4 border-r border-cyber-border pr-6">
+                <div class="flex items-center space-x-1.5"><span class="w-1.5 h-1.5 rounded-full bg-cyber-green"></span><span class="text-white">WebGL 2.0 API</span></div>
+                <div class="flex items-center space-x-1.5"><i class="bi bi-cpu"></i><span>LOD Matrix: Active</span></div>
+            </div>
+            <!-- AI Interaction Module -->
+            <button id="aiMechanicToggle" class="flex items-center space-x-2 bg-cyber-blue/10 hover:bg-cyber-blue/20 border border-cyber-blue/30 px-3 py-1.5 rounded-lg text-cyber-blue transition-all cursor-pointer">
+                <i class="bi bi-robot"></i>
+                <span class="font-sans font-bold">AI Mechanic</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- CORE PLATFORM LAYOUT LAYERS -->
+    <div class="flex-1 flex overflow-hidden relative">
+        
+        <!-- SIDE NAVIGATION MATRIX -->
+        <nav class="glass-panel border-r border-cyber-border w-16 flex flex-col items-center py-4 justify-between z-40">
+            <div class="space-y-3 w-full px-2" id="primaryTabEngine">
+                <button data-target="panel-showroom" class="nav-btn active w-12 h-12 rounded-xl flex flex-col items-center justify-center text-cyber-neon bg-cyber-neon/10 border border-cyber-neon/20 transition-all cursor-pointer" title="3D Configurator Showroom">
+                    <i class="bi bi-unstructured-front text-lg"></i>
+                </button>
+                <button data-target="panel-explore" class="nav-btn w-12 h-12 rounded-xl flex flex-col items-center justify-center text-cyber-muted hover:text-white hover:bg-white/5 transition-all cursor-pointer" title="Universe Encyclopedia">
+                    <i class="bi bi-globe-americas text-lg"></i>
+                </button>
+                <button data-target="panel-library" class="nav-btn w-12 h-12 rounded-xl flex flex-col items-center justify-center text-cyber-muted hover:text-white hover:bg-white/5 transition-all cursor-pointer" title="Engineering Blueprint Library">
+                    <i class="bi bi-diagram-3 text-lg"></i>
+                </button>
+                <button data-target="panel-manual" class="nav-btn w-12 h-12 rounded-xl flex flex-col items-center justify-center text-cyber-muted hover:text-white hover:bg-white/5 transition-all cursor-pointer" title="Factory Repair Manuals">
+                    <i class="bi bi-journal-text text-lg"></i>
+                </button>
+                <button data-target="panel-media" class="nav-btn w-12 h-12 rounded-xl flex flex-col items-center justify-center text-cyber-muted hover:text-white hover:bg-white/5 transition-all cursor-pointer" title="Social Engineering Media Feed">
+                    <i class="bi bi-collection-play text-lg"></i>
+                </button>
+            </div>
+            <div class="px-2 w-full">
+                <button id="systemDiagnosticBtn" class="w-12 h-12 rounded-xl flex items-center justify-center text-cyber-green bg-cyber-green/10 border border-cyber-green/20 cursor-pointer" title="System Performance Telemetry">
+                    <i class="bi bi-activity text-lg"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MAIN VIEWPORT CONTAINER HUB -->
+        <div class="flex-1 relative overflow-hidden" id="workspaceContainer">
+            
+            <!-- GLOBAL BACKGROUND 3D CANVAS LAYER -->
+            <div id="threeEngineViewport" class="absolute inset-0 z-0"></div>
+            <div class="viewport-gradient absolute inset-0 z-10"></div>
+
+            <!-- PANEL 1: 3D showroom CONFIGURATOR INTERFACE -->
+            <div id="panel-showroom" class="app-panel absolute inset-0 z-20 flex flex-col justify-between p-6 pointer-events-none">
+                <!-- TOP INTERACTIVE HUD DATA -->
+                <div class="flex justify-between items-start w-full pointer-events-auto">
+                    <div class="glass-panel p-4 rounded-xl max-w-sm">
+                        <div class="text-xs text-cyber-neon font-mono tracking-widest uppercase" id="hudBrand">FERRARI AUTOMOTIVE</div>
+                        <h1 class="text-2xl font-black font-orbitron tracking-tight" id="hudModel">F8 TRIBUTO</h1>
+                        <p class="text-xs text-cyber-muted mt-1" id="hudTeaser">Twin-turbocharged mechanical perfection engineering matrix.</p>
+                        
+                        <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-cyber-border font-mono text-center">
+                            <div><div class="text-[10px] text-cyber-muted">HP</div><div class="text-sm font-bold text-white" id="statHp">710</div></div>
+                            <div><div class="text-[10px] text-cyber-muted">0-100 KM/H</div><div class="text-sm font-bold text-cyber-neon" id="statAcc">2.9s</div></div>
+                            <div><div class="text-[10px] text-cyber-muted">TOP SPEED</div><div class="text-sm font-bold text-white" id="statSpeed">340 km/h</div></div>
+                        </div>
+                    </div>
+
+                    <!-- CAMERA/ENVIRONMENT VISUAL CONTROLS -->
+                    <div class="glass-panel p-2 rounded-xl flex space-x-1 font-mono text-[10px]">
+                        <button id="btnViewRealistic" class="px-3 py-1.5 rounded-lg bg-cyber-neon/20 text-cyber-neon border border-cyber-neon/30 cursor-pointer">REALISTIC</button>
+                        <button id="btnViewWireframe" class="px-3 py-1.5 rounded-lg text-cyber-muted hover:text-white cursor-pointer">X-RAY WIRE</button>
+                        <button id="btnViewExploded" class="px-3 py-1.5 rounded-lg text-cyber-muted hover:text-white cursor-pointer flex items-center gap-1"><i class="bi bi-box-arrow-up"></i>EXPLODE</button>
+                    </div>
+                </div>
+
+                <!-- BOTTOM REALTIME MODIFICATION SYSTEM LAYER -->
+                <div class="w-full pointer-events-auto overflow-x-auto pb-2">
+                    <div class="glass-panel p-4 rounded-2xl flex items-center space-x-6 min-w-max mx-auto">
+                        <!-- Paint Control Group -->
+                        <div class="border-r border-cyber-border pr-6">
+                            <label class="text-[10px] font-mono text-cyber-muted block mb-1.5 tracking-wider">MATRIC PAINT FINISH</label>
+                            <div class="flex space-x-2" id="paintSelectorGroup">
+                                <button data-color="#ef4444" class="w-6 h-6 rounded-full bg-red-500 border border-white/40 cursor-pointer transform scale-110 shadow-lg"></button>
+                                <button data-color="#1e3a8a" class="w-6 h-6 rounded-full bg-blue-900 border border-transparent hover:border-white/20 cursor-pointer"></button>
+                                <button data-color="#0f172a" class="w-6 h-6 rounded-full bg-slate-900 border border-transparent hover:border-white/20 cursor-pointer"></button>
+                                <button data-color="#f59e0b" class="w-6 h-6 rounded-full bg-amber-500 border border-transparent hover:border-white/20 cursor-pointer"></button>
+                            </div>
+                        </div>
+                        <!-- Stance / Height Control Slider -->
+                        <div class="border-r border-cyber-border pr-6">
+                            <label class="text-[10px] font-mono text-cyber-muted block mb-1 tracking-wider">SUSPENSION STANCE (MM)</label>
+                            <input type="range" id="sliderSuspension" min="0" max="100" value="50" class="w-32 accent-cyber-neon bg-slate-950 h-1 rounded-lg cursor-pointer">
+                        </div>
+                        <!-- Tuning Slider Control Group -->
+                        <div>
+                            <label class="text-[10px] font-mono text-cyber-muted block mb-1 tracking-wider">ECU TUNING STAGE (STAGES)</label>
+                            <input type="range" id="sliderTuning" min="1" max="4" value="1" class="w-32 accent-cyber-neon bg-slate-950 h-1 rounded-lg cursor-pointer">
+                        </div>
+                        <!-- Interactive Mechanics Actions -->
+                        <div class="flex space-x-2 pl-4">
+                            <button id="actionSoundSim" class="px-4 py-2 bg-slate-950/80 hover:bg-slate-900 border border-cyber-border text-xs rounded-lg font-bold flex items-center gap-2 cursor-pointer text-cyber-orange"><i class="bi bi-volume-up-fill"></i> REVS SOUND</button>
+                            <button id="actionRepairMode" class="px-4 py-2 bg-cyber-blue hover:bg-cyber-blue/80 text-white text-xs font-bold rounded-lg flex items-center gap-2 cursor-pointer shadow-neon-blue"><i class="bi bi-wrench-adjustable"></i> REPAIR WORKSHOP</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 2: ENCYCLOPEDIA UNIVERSE GRID -->
+            <div id="panel-explore" class="app-panel absolute inset-0 z-20 hidden p-6 overflow-y-auto bg-cyber-bg/95">
+                <div class="max-w-6xl mx-auto space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-cyber-border pb-4">
+                        <div>
+                            <h2 class="text-2xl font-black font-orbitron tracking-wider">UNIVERSE VEHICLE ENCYCLOPEDIA</h2>
+                            <p class="text-xs text-cyber-muted mt-1">Explore real specifications and historical significance of legendary production engines.</p>
+                        </div>
+                        <!-- Filters Submenu -->
+                        <div class="flex flex-wrap gap-1.5 font-mono text-[10px]" id="filterTabsGroup">
+                            <button data-filter="all" class="px-3 py-1.5 rounded-md bg-cyber-neon text-white font-bold cursor-pointer">ALL BRANDS</button>
+                            <button data-filter="hypercar" class="px-3 py-1.5 rounded-md glass-card text-cyber-muted cursor-pointer">HYPERCAR</button>
+                            <button data-filter="jdm" class="px-3 py-1.5 rounded-md glass-card text-cyber-muted cursor-pointer">JDM LEGENDS</button>
+                            <button data-filter="ev" class="px-3 py-1.5 rounded-md glass-card text-cyber-muted cursor-pointer">EV PLATFORMS</button>
+                        </div>
+                    </div>
+
+                    <!-- CAR ENCYCLOPEDIA DISPLAY MATRIX -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="encyclopediaGrid">
+                        <!-- Injected via Platform Javascript Engine dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 3: COMPONENT ENGINEERING BLUEPRINT LIBRARY -->
+            <div id="panel-library" class="app-panel absolute inset-0 z-20 hidden p-6 overflow-y-auto bg-cyber-bg/95">
+                <div class="max-w-5xl mx-auto space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-black font-orbitron tracking-wider">ENGINEERING COMPONENT LIBRARY</h2>
+                        <p class="text-xs text-cyber-muted mt-1">Deep mechanical structure down to individual functional connectors.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Structural Tree Selection Architecture Left -->
+                        <div class="glass-panel p-4 rounded-xl space-y-2 h-[500px] overflow-y-auto font-mono text-xs">
+                            <div class="text-cyber-neon font-bold pb-2 border-b border-cyber-border flex items-center gap-2"><i class="bi bi-hierarchy"></i> VEHICLE COMPONENT TREE</div>
+                            
+                            <div class="space-y-1 pt-2">
+                                <div class="p-2 bg-white/5 rounded text-white flex items-center justify-between cursor-pointer border-l-2 border-cyber-neon">
+                                    <span>1.0 ENGINE ASSEMBLY</span><i class="bi bi-chevron-down text-[10px]"></i>
+                                </div>
+                                <div class="pl-4 space-y-1 font-sans text-xs">
+                                    <button class="w-full text-left p-1.5 text-cyber-neon hover:text-white block rounded part-tree-node" data-part="piston">▪ Pistons & Pins Assembly</button>
+                                    <button class="w-full text-left p-1.5 text-cyber-muted hover:text-white block rounded part-tree-node" data-part="crankshaft">▪ Forged Steel Crankshaft</button>
+                                    <button class="w-full text-left p-1.5 text-cyber-muted hover:text-white block rounded part-tree-node" data-part="turbo">▪ Twin-Scroll Turbocharger</button>
+                                </div>
+
+                                <div class="p-2 hover:bg-white/5 rounded text-cyber-muted flex items-center justify-between cursor-pointer">
+                                    <span>2.0 SUSPENSION SYSTEM</span><i class="bi bi-chevron-right text-[10px]"></i>
+                                </div>
+                                <div class="p-2 hover:bg-white/5 rounded text-cyber-muted flex items-center justify-between cursor-pointer">
+                                    <span>3.0 ELECTRONIC CONTROL PLATFORM</span><i class="bi bi-chevron-right text-[10px]"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Deep Inspection Card Right -->
+                        <div class="lg:col-span-2 flex flex-col space-y-4">
+                            <div class="glass-panel p-6 rounded-xl flex-1 space-y-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="text-[10px] font-mono bg-cyber-neon/10 text-cyber-neon px-2 py-0.5 rounded border border-cyber-neon/20" id="partSpecCode">OEM-F8-PIS-04</span>
+                                        <h3 class="text-xl font-bold font-orbitron tracking-wide mt-1" id="partSpecName">Pistons & Pins Assembly</h3>
+                                    </div>
+                                    <div class="text-right font-mono text-[10px] text-cyber-muted">
+                                        <div>MATERIAL: <span class="text-white font-bold" id="partSpecMat">Aluminium-Copper Alloy</span></div>
+                                        <div>MASS: <span class="text-white font-bold" id="partSpecWeight">420 grams</span></div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-slate-950/60 border border-cyber-border rounded-lg text-xs leading-relaxed" id="partExplanation">
+                                    Asymmetric skirt high-stress performance piston architecture optimized for high temperature thermal cycles within twin-turbo setups. High mechanical endurance matrix layout.
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+                                    <div class="p-3 bg-white/5 rounded-lg border border-cyber-border">
+                                        <div class="text-cyber-orange font-bold flex items-center gap-1.5"><i class="bi bi-exclamation-triangle"></i> WEAR & FAILURE INDEX</div>
+                                        <p class="text-[11px] text-cyber-muted mt-1" id="partFailure">Ring groove friction wear under high telemetry heat cycles.</p>
+                                    </div>
+                                    <div class="p-3 bg-white/5 rounded-lg border border-cyber-border">
+                                        <div class="text-cyber-green font-bold flex items-center gap-1.5"><i class="bi bi-shield-check"></i> LIFESPAN INTERVAL</div>
+                                        <p class="text-[11px] text-cyber-muted mt-1" id="partLifespan">120,000 KM under typical configurations.</p>
+                                    </div>
+                                </div>
+
+                                <div class="pt-4 border-t border-cyber-border flex justify-end space-x-2">
+                                    <button class="px-4 py-2 bg-white/5 hover:bg-white/10 text-xs rounded-lg font-mono border border-cyber-border cursor-pointer"><i class="bi bi-printer"></i> PRINT CAD SPEC</button>
+                                    <button id="btnAnimatePart" class="px-4 py-2 bg-cyber-neon text-slate-950 font-bold text-xs rounded-lg cursor-pointer shadow-lg"><i class="bi bi-play-circle-fill"></i> SIMULATE ANIMATION</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 4: FACTORY REPAIR WORKSHOP MANUALS -->
+            <div id="panel-manual" class="app-panel absolute inset-0 z-20 hidden p-6 overflow-y-auto bg-cyber-bg/95">
+                <div class="max-w-4xl mx-auto space-y-4">
+                    <div class="flex justify-between items-center border-b border-cyber-border pb-4">
+                        <div>
+                            <h2 class="text-2xl font-black font-orbitron tracking-wider">OFFICIAL WORKSHOP MANUAL RESOURCE</h2>
+                            <p class="text-xs text-cyber-muted mt-1">CAD schematics configured for standard workshop print layouts.</p>
+                        </div>
+                        <button id="togglePrintLayoutBtn" class="px-4 py-2 bg-white text-slate-900 text-xs font-bold font-mono rounded-lg shadow cursor-pointer"><i class="bi bi-file-earmark-pdf"></i> PRINTABLE A4 MODE</button>
+                    </div>
+
+                    <!-- DOCUMENT BODY LAYER -->
+                    <div id="manualDocumentPaper" class="glass-panel p-8 rounded-xl space-y-6 transition-all">
+                        <div class="flex justify-between border-b-2 border-slate-800 pb-4">
+                            <div>
+                                <div class="font-orbitron font-black text-lg tracking-widest text-cyber-neon" id="manualDocHeaderLogo">CARVERSE MANUALS</div>
+                                <div class="text-[10px] font-mono text-cyber-muted" id="manualDocMeta">SEC: ENGINE-REBUILD // GROUP-4</div>
+                            </div>
+                            <div class="text-right text-xs font-mono">
+                                <div class="font-bold">MODEL SPECIFICATION: F8-TRIBUTO</div>
+                                <div class="text-cyber-muted">YEAR COMPILATION: 2020 - 2026</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-mono bg-cyber-red/10 text-cyber-red px-2 py-0.5 rounded border border-cyber-red/20 font-bold">LEVEL: PROFESSIONAL SERVICE MECHANIC</span>
+                            <h3 class="text-xl font-bold mt-2" id="manualDocTitle">Task 1.02: High-Pressure Twin-Turbocharger Replacement Matrix</h3>
+                            <p class="text-xs text-cyber-muted mt-1">Precision removal protocol optimized for central mid-engine configurations.</p>
+                        </div>
+
+                        <!-- Technical Steps Grid -->
+                        <div class="space-y-4 text-xs font-sans">
+                            <div class="p-3 bg-slate-900/40 border border-cyber-border rounded-lg flex items-start space-x-3">
+                                <span class="font-mono bg-cyber-neon/20 text-cyber-neon w-6 h-6 rounded flex items-center justify-center font-bold">01</span>
+                                <div>
+                                    <strong class="text-white block font-medium">Decompress and Drain System</strong>
+                                    <span class="text-cyber-muted text-[11px]">Isolate high pressure fuel infrastructure lines. Drain primary core liquid lines completely before structural detaching.</span>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-slate-900/40 border border-cyber-border rounded-lg flex items-start space-x-3">
+                                <span class="font-mono bg-cyber-neon/20 text-cyber-neon w-6 h-6 rounded flex items-center justify-center font-bold">02</span>
+                                <div>
+                                    <strong class="text-white block font-medium">Unbolt Primary Exhaust Manifold Node Couplings</strong>
+                                    <span class="text-cyber-muted text-[11px]">Apply exactly <span class="text-cyber-orange font-bold font-mono">45 Nm torque value</span> using torque tool framework instrumentation. Avoid radial shear lines.</span>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-slate-900/40 border border-cyber-border rounded-lg flex items-start space-x-3">
+                                <span class="font-mono bg-cyber-neon/20 text-cyber-neon w-6 h-6 rounded flex items-center justify-center font-bold">03</span>
+                                <div>
+                                    <strong class="text-white block font-medium">Extract Core Turbo Assembly Housing Module</strong>
+                                    <span class="text-cyber-muted text-[11px]">Gently slide horizontal component block structural pins along precision path guides. Verify structural engine wall spacing clear margins.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Footing Specs -->
+                        <div class="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs rounded-lg flex items-start space-x-2">
+                            <i class="bi bi-exclamation-triangle-fill mt-0.5"></i>
+                            <div>
+                                <strong>CRITICAL SAFETY WARNING:</strong> Thermal components retain extreme latent operational heat cycles. Ensure cool duration framework window minimum of 180 standard minutes prior to hands-on interaction.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 5: INSTAGRAM/REELS STYLE DIGITAL SOCIAL HUB -->
+            <div id="panel-media" class="app-panel absolute inset-0 z-20 hidden p-6 overflow-y-auto bg-cyber-bg/95">
+                <div class="max-w-md mx-auto space-y-6">
+                    <div class="border-b border-cyber-border pb-3 flex items-center justify-between">
+                        <h2 class="text-lg font-black font-orbitron tracking-widest text-white flex items-center gap-2"><i class="bi bi-fire text-cyber-orange"></i> LATEST CREATOR REELS</h2>
+                        <span class="text-[10px] font-mono bg-white/10 px-2 py-0.5 rounded text-cyber-muted">LIVE FEED</span>
+                    </div>
+
+                    <!-- SOCIAL REEL POST MATRIX -->
+                    <div class="space-y-6" id="socialFeedContainer">
+                        <!-- Card 1 -->
+                        <div class="glass-panel rounded-2xl overflow-hidden border border-cyber-border">
+                            <div class="p-3 flex items-center justify-between border-b border-cyber-border">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-cyber-red flex items-center justify-center text-[10px] font-bold text-white">ZX</div>
+                                    <div>
+                                        <div class="text-xs font-bold">@HyperTuner_Max</div>
+                                        <div class="text-[9px] text-cyber-muted">Mod Garage Workspace, Islamabad</div>
+                                    </div>
+                                </div>
+                                <i class="bi bi-three-dots cursor-pointer text-cyber-muted hover:text-white"></i>
+                            </div>
+                            
+                            <!-- Static Aesthetic Multimedia Node Replacement -->
+                            <div class="relative bg-slate-900 aspect-video flex flex-col items-center justify-center text-center p-4 group border-y border-cyber-border">
+                                <div class="w-12 h-12 rounded-full bg-cyber-neon/20 text-cyber-neon flex items-center justify-center border border-cyber-neon/40 text-lg group-hover:scale-110 transition-all cursor-pointer"><i class="bi bi-play-fill"></i></div>
+                                <span class="text-[11px] font-mono mt-3 text-white tracking-wide">STREAMING MODEL RUNTIME SIMULATION</span>
+                                <span class="text-[9px] text-cyber-muted mt-1">Ferrari F8 Stage 3 Custom Dyno Mapping Analysis</span>
+                            </div>
+
+                            <div class="p-4 space-y-2">
+                                <div class="flex justify-between items-center text-sm">
+                                    <div class="flex space-x-4">
+                                        <button class="hover:text-cyber-red transition-all cursor-pointer flex items-center gap-1 text-cyber-red font-bold"><i class="bi bi-heart-fill"></i> <span class="text-xs font-mono text-white font-normal">1.4k</span></button>
+                                        <button class="hover:text-cyber-neon transition-all cursor-pointer flex items-center gap-1"><i class="bi bi-chat"></i> <span class="text-xs font-mono text-white">84</span></button>
+                                        <button class="hover:text-cyber-blue transition-all cursor-pointer"><i class="bi bi-send"></i></button>
+                                    </div>
+                                    <i class="bi bi-bookmark cursor-pointer text-cyber-muted hover:text-white"></i>
+                                </div>
+                                <div class="text-xs">
+                                    <span class="font-bold mr-1">@HyperTuner_Max</span> Extracted an extra 85 HP out of the F8 architecture today with the new turbo mappings! Absolute hypercar beast. ⚡ <span class="text-cyber-blue cursor-pointer">#ferrari #tuning #dyno #hypercar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHATBOT LAYER WINDOW OVERLAY -->
+            <div id="aiChatbotOverlay" class="fixed bottom-6 right-6 w-80 glass-panel rounded-2xl shadow-2xl border border-cyber-border hidden flex-col z-50 overflow-hidden">
+                <div class="p-3 bg-cyber-blue/20 border-b border-cyber-border flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <i class="bi bi-robot text-cyber-blue
